@@ -13,8 +13,39 @@ namespace AICustomScripts {
 
         private static string rootDirectory = "F:/SteamLibrary/steamapps/common/Alien Isolation/";
 
+        /*
+         * Test of a custom mission with Stevieboy
+         */
         public static void Main() {
+            Commands commands = new Commands(rootDirectory + "DATA/ENV/PRODUCTION/ENG_TOWPLATFORM/WORLD/COMMANDS.PAK");
+            Composite composite = commands.EntryPoints[0];
 
+            // Add checkpoint
+            FunctionEntity checkpoint = composite.AddFunction(FunctionType.Checkpoint);
+            checkpoint.AddParameter("is_first_checkpoint", new cBool(true));
+            checkpoint.AddParameter("section", new cString("Entry"));
+
+            // Add position
+            cTransform cTransform = new cTransform();
+            cTransform.position = new CathodeLib.Vector3(0.1337f, 0.420f, 0.69f);
+            cTransform.rotation = new CathodeLib.Vector3(0, 0, 0);
+            checkpoint.AddParameter("position", cTransform);
+
+            // Add player
+            FunctionEntity playerSpawn = composite.AddFunction(commands.GetComposite("ARCHETYPES\\SCRIPT\\MISSION\\SPAWNPOSITIONSELECT"));
+            checkpoint.AddParameterLink("finished_loading", playerSpawn, "SpawnPlayer");
+
+            // Add objective
+            FunctionEntity objective = composite.AddFunction(FunctionType.SetPrimaryObjective);
+            objective.AddParameter("title", new cString("Survive!"));
+            objective.AddParameter("additional_info", new cString("You should survive."));
+            checkpoint.AddParameterLink("finished_loading", objective, "trigger");
+
+            // Add Stevieboy
+            FunctionEntity steve = composite.AddFunction(commands.GetComposite("ARCHETYPES\\NPCS\\ALIEN\\XENOMORPH_NPC"));
+            checkpoint.AddParameterLink("finished_loading", steve, "spawn_npc");
+
+            commands.Save();
         }
 
         /*
