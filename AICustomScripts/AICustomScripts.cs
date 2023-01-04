@@ -41,6 +41,22 @@ namespace AICustomScripts {
             objective.AddParameter("additional_info", new cString("You should survive."));
             checkpoint.AddParameterLink("finished_loading", objective, "trigger");
 
+            // Add a window after 3 seconds with 3 buttons
+            FunctionEntity test = composite.AddFunction(FunctionType.DisplayMessageWithCallbacks);
+            test.AddParameter("title_text", new cString("HEY YOU!"));
+            test.AddParameter("message_text", new cString("Do you like cookies?"));
+            test.AddParameter("yes_text", new cString("yes"));
+            test.AddParameter("no_text", new cString("no"));
+            test.AddParameter("cancel_text", new cString("cancel"));
+            test.AddParameter("yes_button", new cBool(true));
+            test.AddParameter("no_button", new cBool(true));
+            test.AddParameter("cancel_button", new cBool(true));
+
+            FunctionEntity logicDelay = composite.AddFunction(FunctionType.LogicDelay);
+            logicDelay.AddParameter("delay", new cFloat(3));
+            logicDelay.AddParameterLink("on_delay_finished", test, "trigger");
+            checkpoint.AddParameterLink("finished_loading", logicDelay, "trigger");
+
             // Add Stevieboy
             FunctionEntity steve = composite.AddFunction(commands.GetComposite("ARCHETYPES\\NPCS\\ALIEN\\XENOMORPH_NPC"));
             checkpoint.AddParameterLink("finished_loading", steve, "spawn_npc");
