@@ -42,19 +42,19 @@ namespace AICustomScripts {
             checkpoint.AddParameterLink("finished_loading", objective, "trigger");
 
             // Add a window after 3 seconds with 3 buttons
-            FunctionEntity test = composite.AddFunction(FunctionType.DisplayMessageWithCallbacks);
-            test.AddParameter("title_text", new cString("HEY YOU!"));
-            test.AddParameter("message_text", new cString("Do you like cookies?"));
-            test.AddParameter("yes_text", new cString("yes"));
-            test.AddParameter("no_text", new cString("no"));
-            test.AddParameter("cancel_text", new cString("cancel"));
-            test.AddParameter("yes_button", new cBool(true));
-            test.AddParameter("no_button", new cBool(true));
-            test.AddParameter("cancel_button", new cBool(true));
+            FunctionEntity displayMessage = composite.AddFunction(FunctionType.DisplayMessageWithCallbacks);
+            displayMessage.AddParameter("title_text", new cString("HEY YOU!"));
+            displayMessage.AddParameter("message_text", new cString("Do you like cookies?"));
+            displayMessage.AddParameter("yes_text", new cString("yes"));
+            displayMessage.AddParameter("no_text", new cString("no"));
+            displayMessage.AddParameter("cancel_text", new cString("cancel"));
+            displayMessage.AddParameter("yes_button", new cBool(true));
+            displayMessage.AddParameter("no_button", new cBool(true));
+            displayMessage.AddParameter("cancel_button", new cBool(true));
 
             FunctionEntity logicDelay = composite.AddFunction(FunctionType.LogicDelay);
             logicDelay.AddParameter("delay", new cFloat(3));
-            logicDelay.AddParameterLink("on_delay_finished", test, "trigger");
+            logicDelay.AddParameterLink("on_delay_finished", displayMessage, "trigger");
             checkpoint.AddParameterLink("finished_loading", logicDelay, "trigger");
 
             // Add Stevieboy
@@ -62,6 +62,52 @@ namespace AICustomScripts {
             checkpoint.AddParameterLink("finished_loading", steve, "spawn_npc");
 
             commands.Save();
+        }
+
+        /*
+         * Ask user a question, correct answer = happy, incorrect answer = kill player
+         * @TODO - doesn't work yet (probably cause of the CMD_Die settings)
+         */
+        public static void MainAskUser() {
+            Commands commands = new Commands(rootDirectory + "DATA/ENV/PRODUCTION/ENG_TOWPLATFORM/WORLD/COMMANDS.PAK");
+            Composite composite = commands.EntryPoints[0];
+            FunctionEntity checkpoint = composite.AddFunction(FunctionType.Checkpoint);
+
+            // Show first window
+            FunctionEntity likeThisMod = composite.AddFunction(FunctionType.DisplayMessageWithCallbacks);
+            likeThisMod.AddParameter("title_text", new cString("HEY YOU!"));
+            likeThisMod.AddParameter("message_text", new cString("Do you like this mod?"));
+            likeThisMod.AddParameter("yes_text", new cString("yes"));
+            likeThisMod.AddParameter("no_text", new cString("no"));
+            likeThisMod.AddParameter("yes_button", new cBool(true));
+            likeThisMod.AddParameter("no_button", new cBool(true));
+
+            // When clicked yes
+            FunctionEntity goodBoy = composite.AddFunction(FunctionType.DisplayMessageWithCallbacks);
+            goodBoy.AddParameter("title_text", new cString(":)"));
+            goodBoy.AddParameter("message_text", new cString(""));
+            goodBoy.AddParameter("yes_text", new cString("OK"));
+            goodBoy.AddParameter("yes_button", new cBool(true));
+
+            // When clicked no
+            FunctionEntity triggerBindCharacter = composite.AddFunction(FunctionType.TriggerBindCharacter);
+            FunctionEntity cmdDie = composite.AddFunction(FunctionType.CMD_Die);
+            FunctionEntity variableThePlayer = composite.AddFunction(FunctionType.VariableThePlayer);
+
+            triggerBindCharacter.AddParameterLink("characters", variableThePlayer, "reference");
+            triggerBindCharacter.AddParameterLink("bound_trigger", cmdDie, "apply_start");
+            likeThisMod.AddParameterLink("on_no", triggerBindCharacter, "trigger");
+
+            FunctionEntity killPlayer = composite.AddFunction(FunctionType.CMD_Die);
+            killPlayer.AddParameter("death_style", new cInteger(1));
+            likeThisMod.AddParameterLink("on_no", killPlayer, "trigger");
+            likeThisMod.AddParameterLink("on_yes", goodBoy, "trigger");
+
+            // Displays the window after 5 seconds
+            FunctionEntity logicDelayLikeThisMod = composite.AddFunction(FunctionType.LogicDelay);
+            logicDelayLikeThisMod.AddParameter("delay", new cFloat(5));
+            logicDelayLikeThisMod.AddParameterLink("on_delay_finished", likeThisMod, "trigger");
+            checkpoint.AddParameterLink("finished_loading", logicDelayLikeThisMod, "trigger");
         }
 
         /*
