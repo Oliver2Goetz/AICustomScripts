@@ -15,16 +15,13 @@ namespace AICustomScripts {
         static Commands commands = null;
         static Composite composite = null;
         static FunctionEntity checkpoint = null;
+        static EntityUtils entityUtils = null;
 
         /*
          * Entrypoint of the custom mission
          */
         public static void MainCustomM18(string rootDirectory) {
-            commands = new Commands(rootDirectory + "DATA/ENV/PRODUCTION/ENG_TOWPLATFORM/WORLD/COMMANDS.PAK");
-            composite = commands.EntryPoints[0];
-
-            // Setup for composite
-            //setup();
+            setup(rootDirectory);
 
             // Add checkpoint
             checkpoint = composite.AddFunction(FunctionType.Checkpoint);
@@ -45,10 +42,10 @@ namespace AICustomScripts {
         }
 
         /*
-         * Setup like mission clear, etc.
+         * Setup
          */
-        private static void setup() {
-            Composite levelComposite = commands.GetComposite("SCRIPT_STORYMISSION\\M33_SHOWDOWN\\M33_PART_01\\M33_PT01");
+        private static void setup(string rootDirectory) {
+            /*Composite levelComposite = commands.GetComposite("SCRIPT_STORYMISSION\\M33_SHOWDOWN\\M33_PART_01\\M33_PT01");
             List<FunctionEntity> functions = levelComposite.functions;
             byte[] b = new byte[4] { 205, 248, 210, 1}; // Sound
 
@@ -56,7 +53,11 @@ namespace AICustomScripts {
                 if (function.function.val[0] == b[0]) {
                     functions.Remove(function);
                 }
-            }
+            }*/
+
+            commands = new Commands(rootDirectory + "DATA/ENV/PRODUCTION/ENG_TOWPLATFORM/WORLD/COMMANDS.PAK");
+            composite = commands.EntryPoints[0];
+            entityUtils = new EntityUtils(commands);
         }
 
         /*
