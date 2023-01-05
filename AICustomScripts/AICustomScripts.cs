@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using CATHODE;
 using CATHODE.Scripting;
+using CathodeLib;
 
 namespace AICustomScripts {
 
@@ -14,9 +15,16 @@ namespace AICustomScripts {
         private static string rootDirectory = "F:/SteamLibrary/steamapps/common/Alien Isolation/";
 
         /*
-         * Test of a custom mission with Stevieboy
+         * Test of an own M18
          */
         public static void Main() {
+            CustomM18.MainCustomM18(rootDirectory);
+        }
+
+        /*
+         * Test of a custom mission with Stevieboy
+         */
+        public static void MainSomeTestStuff() {
             Commands commands = new Commands(rootDirectory + "DATA/ENV/PRODUCTION/ENG_TOWPLATFORM/WORLD/COMMANDS.PAK");
             Composite composite = commands.EntryPoints[0];
 
@@ -68,7 +76,7 @@ namespace AICustomScripts {
          * Ask user a question, correct answer = happy, incorrect answer = kill player
          * @TODO - doesn't work yet (probably cause of the CMD_Die settings)
          */
-        public static void MainAskUser() {
+        public static void MainTestWindow() {
             Commands commands = new Commands(rootDirectory + "DATA/ENV/PRODUCTION/ENG_TOWPLATFORM/WORLD/COMMANDS.PAK");
             Composite composite = commands.EntryPoints[0];
             FunctionEntity checkpoint = composite.AddFunction(FunctionType.Checkpoint);
@@ -108,6 +116,8 @@ namespace AICustomScripts {
             logicDelayLikeThisMod.AddParameter("delay", new cFloat(5));
             logicDelayLikeThisMod.AddParameterLink("on_delay_finished", likeThisMod, "trigger");
             checkpoint.AddParameterLink("finished_loading", logicDelayLikeThisMod, "trigger");
+
+            commands.Save();
         }
 
         /*

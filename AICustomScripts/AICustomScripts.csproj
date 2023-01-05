@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AICustomScripts.cs" />
+    <Compile Include="CustomM18.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CathodeLib, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
