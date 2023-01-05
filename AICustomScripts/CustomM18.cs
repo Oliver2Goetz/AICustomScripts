@@ -105,6 +105,18 @@ namespace AICustomScripts {
             logicDelay3min.AddParameterLink("on_delay_finished", steve5, "despawn_npc");
 
             checkpoint.AddParameterLink("finished_loading", logicDelay3min, "trigger");
+
+            // Show halfway done message :D
+            FunctionEntity displayMessageHalftime = composite.AddFunction(FunctionType.DisplayMessageWithCallbacks);
+            displayMessageHalftime.AddParameter("title_text", new cString("Halfway done"));
+            displayMessageHalftime.AddParameter("message_text", new cString("You're doing fantastic, keep going!"));
+            displayMessageHalftime.AddParameter("yes_text", new cString("No! I'm actally struggling."));
+            displayMessageHalftime.AddParameter("yes_button", new cBool(true));
+            FunctionEntity logicDelayHalftime = composite.AddFunction(FunctionType.LogicDelay);
+            logicDelayHalftime.AddParameter("delay", new cFloat(15f));
+            logicDelayHalftime.AddParameterLink("on_delay_finished", displayMessageHalftime, "trigger");
+
+            checkpoint.AddParameterLink("finished_loading", logicDelayHalftime, "trigger");
         }
     }
 }
